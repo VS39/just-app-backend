@@ -38,6 +38,7 @@ const signUp = async (req, res) => {
       email: req.body.email,
       password: req.body.password,
       username: req.body.username,
+      joinedTime: req.body.joinedTime,
       isFollowing: false,
       profilePic: "",
       backgroundPic: "",
@@ -223,7 +224,8 @@ const viewUser = async (req, res) => {
     });
     const userImages = await User.findById(existingUser._id).populate({
       path: "userPosts",
-      select: "id caption image uploadedByUsername uploadedByAvatar uploadedByName uploadedById uploadTime", // Specify the fields you want to include
+      select:
+        "id caption image uploadedByUsername uploadedByAvatar uploadedByName uploadedById uploadTime", // Specify the fields you want to include
     });
     res.status(200).json({
       Data: {
@@ -231,6 +233,7 @@ const viewUser = async (req, res) => {
         name: user.name,
         email: user.email,
         loggedInUserId: loggedInUserId,
+        joinedTime: user.joinedTime,
         // password: user.password,
         username: user.username,
         backgroundPic: user.backgroundPic,
@@ -316,6 +319,45 @@ const updateUser = async (req, res) => {
     const updatedUser = await User.findById(id);
     res.status(200).json({
       Data: updatedUser,
+      Success: true,
+      message: "Executed successfully.",
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({
+      message: e.message,
+    });
+  }
+};
+
+const getUserPic = async (req, res) => {
+  try {
+    req.params.username = req.params.username.toLowerCase();
+
+    const existingUser = await User.findOne({
+      username: req.params.username,
+    });
+    if (!existingUser) {
+      return res.status(200).json({
+        Data: "",
+        Success: false,
+        message: "Username does not exist.",
+      });
+    }
+
+    const user = await User.findById(existingUser._id);
+    if (!user) {
+      return res.status(404).json({ message: `User not found.` });
+    }
+    
+    res.status(200).json({
+      Data: {
+        id: user._id,
+        name: user.name,
+        username: user.username,
+        backgroundPic: user.backgroundPic,
+        profilePic: user.profilePic,
+      },
       Success: true,
       message: "Executed successfully.",
     });
@@ -508,7 +550,7 @@ const updateField = async (req, res) => {
     // const url = req.protocol + "://" + req.get("host");
     // imagePath = url + "/images/" + "noAvatar.png";
 
-    // const user = await User.updateMany({}, { $set: { userPost: [] } }); //To add new field
+    // const user = await User.updateMany({}, { $set: { joinedTime: "" } }); //To add new field
 
     // const user = await User.updateMany(
     //   {},
@@ -523,12 +565,12 @@ const updateField = async (req, res) => {
     // ); // To upadte field's name
 
     // const user = await User.updateMany(
-    //   { profilePic: imagePath },
-    //   { $set: { profilePic: "" } },
+    //   { joinedTime: "Fri Jul 07 2023 10:19:13 GMT+0530 (India Standard Time)" },
+    //   { $set: { joinedTime: "2023-07-04 14:46:37" } },
     //   { multi: true }
     // ); //To update conditionally
 
-    const user = await Post.deleteMany({}) //To delete all documents
+    // const user = await Post.deleteMany({}) //To delete all documents
 
     res.status(200).json({
       Data: user,
@@ -559,4 +601,5 @@ module.exports = {
   follow,
   unfollow,
   getfollowList,
+  getUserPic
 };

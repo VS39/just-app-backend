@@ -34,9 +34,10 @@ const storage = multer.diskStorage({
 router.post("/signUp", UserController.signUp);
 router.post("/logIn", UserController.logIn);
 router.post("/checkExistingUser", UserController.checkExistingUser);
-router.get("/viewUser/:username", checkAuth, UserController.viewUser);
+router.get("/:username/viewUser", checkAuth, UserController.viewUser);
+router.get("/:username/getUserPic", checkAuth, UserController.getUserPic);
 router.put(
-  "/updateUser/:id",
+  "/:id/updateUser",
   multer({ storage: storage }).single("profilePic"),
   checkAuth,
   UserController.updateUser
@@ -44,6 +45,7 @@ router.put(
 router.post("/resetPassword", UserController.resetPassword);
 router.post("/:id/follow", UserController.follow);
 router.post("/:id/unfollow", UserController.unfollow);
+router.get("/:id/getfollowList", UserController.getfollowList);
 router.get("/:id/getfollowList", UserController.getfollowList);
 
 router.get("/allUsers", UserController.allUsers);

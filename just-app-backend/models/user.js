@@ -16,6 +16,7 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
     },
+    joinedTime: { type: String },
     profilePic: {
       type: String,
     },
@@ -46,6 +47,7 @@ function validateSignUp(user) {
     username: Joi.string().required(),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
+    joinedTime: Joi.string().required(),
   });
   return schema.validate(user);
 }

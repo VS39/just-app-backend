@@ -35,4 +35,15 @@ router.post(
   PostController.addPost
 );
 
+router.get("/:username/viewPosts", checkAuth, PostController.viewPosts);
+
+router.put("/:id/updatePost", checkAuth, PostController.updatePost);
+
+router.delete("/:id/deletePost", checkAuth, PostController.deletePost);
+router.put(
+  "/:postId/deleteImage",
+  checkAuth,
+  PostController.deleteImage
+);
+
 module.exports = router;

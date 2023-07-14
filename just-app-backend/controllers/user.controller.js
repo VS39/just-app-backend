@@ -213,20 +213,22 @@ const viewUser = async (req, res) => {
       });
     }
 
-    // const { id } = req.params;
     const user = await User.findById(existingUser._id);
     if (!user) {
       return res.status(404).json({ message: `User not found.` });
     }
+
     const userFollowers = await User.findById(existingUser._id).populate({
       path: "followers following",
       select: "id name username bio profilePic", // Specify the fields you want to include
     });
+
     const userImages = await User.findById(existingUser._id).populate({
       path: "userPosts",
       select:
-        "id caption image uploadedByUsername uploadedByAvatar uploadedByName uploadedById uploadTime", // Specify the fields you want to include
+        "id caption comments likes image uploadedByUsername uploadedByAvatar uploadedByName uploadedById uploadTime", // Specify the fields you want to include
     });
+
     res.status(200).json({
       Data: {
         id: user._id,
@@ -349,7 +351,7 @@ const getUserPic = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: `User not found.` });
     }
-    
+
     res.status(200).json({
       Data: {
         id: user._id,
@@ -369,7 +371,36 @@ const getUserPic = async (req, res) => {
   }
 };
 
-const follow = async (req, res) => {
+const getUserDetails = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    // Find users with the given IDs
+    const users = await User.find({ _id: { $in: id } });
+
+    // Prepare the response data with user details
+    const userDetails = users.map((user) => ({
+      _id: user._id,
+      name: user.name,
+      username: user.username,
+      bio: user.bio,
+      profilePic: user.profilePic,
+    }));
+
+    res.status(200).json({
+      Data: userDetails,
+      Success: true,
+      message: "Executed successfully.",
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({
+      message: e.message,
+    });
+  }
+};
+
+const followUser = async (req, res) => {
   try {
     const currentUser = await User.findById(req.body.id);
     if (!currentUser) {
@@ -405,7 +436,7 @@ const follow = async (req, res) => {
   }
 };
 
-const unfollow = async (req, res) => {
+const unfollowUser = async (req, res) => {
   try {
     const currentUser = await User.findById(req.body.id);
     if (!currentUser) {
@@ -550,7 +581,7 @@ const updateField = async (req, res) => {
     // const url = req.protocol + "://" + req.get("host");
     // imagePath = url + "/images/" + "noAvatar.png";
 
-    // const user = await User.updateMany({}, { $set: { joinedTime: "" } }); //To add new field
+    // const user = await Post.updateMany({}, { $set: { likes: "" } }); //To add new field
 
     // const user = await User.updateMany(
     //   {},
@@ -564,16 +595,53 @@ const updateField = async (req, res) => {
     //   { multi: true }
     // ); // To upadte field's name
 
-    // const user = await User.updateMany(
-    //   { joinedTime: "Fri Jul 07 2023 10:19:13 GMT+0530 (India Standard Time)" },
-    //   { $set: { joinedTime: "2023-07-04 14:46:37" } },
+    // const user = await Post.updateMany(
+    //   { comments: [] },
+    //   { $set: { comments: { comments: [], commentsCount: 0 } } },
     //   { multi: true }
     // ); //To update conditionally
+
+    // const user = await Post.updateMany(
+    //   { comments: { $exists: true, $ne: [] } },
+    //   { $set: { "comments.commentsCount": { $size: "$comments.comments" } } },
+    //   { multi: true }
+    // ); //To update conditional if multiple updates
+
+    // const posts = await Post.find();
+    // for (let i = 0; i < posts.length; i++) {
+    //   const post = posts[i];
+
+    //   // Update the comments structure
+    //   post.comments = {
+    //     comments: [],
+    //     commentsCount: 0,
+    //   };
+
+    //   await post.save();
+    // } //To update nested objects in all
+
+    // const posts = await Post.find();
+    // for (let i = 0; i < posts.length; i++) {
+    //   const post = posts[i];
+
+    //   // Update the comments structure
+    //   for (let j = 0; j < post.comments.comments.length; j++) {
+    //     const comment = post.comments.comments[j];
+
+    //     // Update the replies structure
+    //     comment.replies = {
+    //       replies: [],
+    //       repliesCount: 0,
+    //     };
+    //   }
+
+    //   await post.save();
+    // } //To update nested nested
 
     // const user = await Post.deleteMany({}) //To delete all documents
 
     res.status(200).json({
-      Data: user,
+      Data: posts,
       Success: true,
       message: "Updated successfully.",
     });
@@ -598,8 +666,9 @@ module.exports = {
   encryptCall,
   decryptCall,
   updateField,
-  follow,
-  unfollow,
+  followUser,
+  unfollowUser,
   getfollowList,
-  getUserPic
+  getUserPic,
+  getUserDetails,
 };

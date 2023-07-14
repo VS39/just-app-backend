@@ -34,16 +34,33 @@ router.post(
   checkAuth,
   PostController.addPost
 );
-
 router.get("/:username/viewPosts", checkAuth, PostController.viewPosts);
-
 router.put("/:id/updatePost", checkAuth, PostController.updatePost);
-
 router.delete("/:id/deletePost", checkAuth, PostController.deletePost);
-router.put(
-  "/:postId/deleteImage",
+router.put("/:postId/deleteImage", checkAuth, PostController.deleteImage);
+router.put("/:postId/likePost", checkAuth, PostController.likePost);
+router.post("/:postId/addComment", checkAuth, PostController.addComment);
+router.put("/:postId/updateComment", checkAuth, PostController.updateComment);
+router.delete(
+  "/:postId/:commentId/deleteComment",
   checkAuth,
-  PostController.deleteImage
+  PostController.deleteComment
+);
+router.post("/:postId/:commentId/addReply", checkAuth, PostController.addReply);
+router.delete(
+  "/:postId/:commentId/:replyId/deleteReply",
+  checkAuth,
+  PostController.deleteReply
+);
+router.put(
+  "/:postId/:commentId/likeComment",
+  checkAuth,
+  PostController.likeComment
+);
+router.put(
+  "/:postId/:commentId/:replyId/likeReply",
+  checkAuth,
+  PostController.likeReply
 );
 
 module.exports = router;

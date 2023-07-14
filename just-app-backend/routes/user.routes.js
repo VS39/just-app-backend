@@ -36,6 +36,7 @@ router.post("/logIn", UserController.logIn);
 router.post("/checkExistingUser", UserController.checkExistingUser);
 router.get("/:username/viewUser", checkAuth, UserController.viewUser);
 router.get("/:username/getUserPic", checkAuth, UserController.getUserPic);
+router.put("/getUserDetails", checkAuth, UserController.getUserDetails);
 router.put(
   "/:id/updateUser",
   multer({ storage: storage }).single("profilePic"),
@@ -43,8 +44,8 @@ router.put(
   UserController.updateUser
 );
 router.post("/resetPassword", UserController.resetPassword);
-router.post("/:id/follow", UserController.follow);
-router.post("/:id/unfollow", UserController.unfollow);
+router.post("/:id/followUser", UserController.followUser);
+router.post("/:id/unfollowUser", UserController.unfollowUser);
 router.get("/:id/getfollowList", UserController.getfollowList);
 router.get("/:id/getfollowList", UserController.getfollowList);
 

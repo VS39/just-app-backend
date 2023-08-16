@@ -5,6 +5,11 @@ const dotenv = require("dotenv");
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
+const path = require("path");
+
+const userRoute = require("./routes/user.routes.js");
+const postRoute = require("./routes/post.routes.js");
+
 
 //app.use(bodyParser.json()); // for parsing application/json
 //app.use(bodyParser.urlencoded({ extended: true }));
@@ -12,7 +17,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -21,9 +26,11 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json());
+app.use("/images",express.static(path.join("./images")));
 
-const userRoute = require("./routes/user.routes.js");
+
 app.use("/api/user", userRoute);
+app.use("/api/post", postRoute);
 
 connectDB(); // connect to mongodb
 

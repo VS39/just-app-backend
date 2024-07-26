@@ -81,6 +81,11 @@ app.use("/", (req, res) => {
     Message: "Node is running."
   });
 });
+app.use("/test", (req, res) => {
+  res.json({
+    Message: "Node is running."
+  });
+});
 
 connectDB(); // connect to mongodb
 

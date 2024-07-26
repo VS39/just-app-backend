@@ -31,9 +31,14 @@ app.use("/images",express.static(path.join("./images")));
 
 app.use("/api/user", userRoute);
 app.use("/api/post", postRoute);
+app.use("/", (req, res) => {
+  res.json({
+    Message:"Node is running."
+  })
+});
 
 connectDB(); // connect to mongodb
 
 app.listen(port, (req, res) => {
-  console.log("RUNNING");
+  console.log(`RUNNING on port ${port}`);
 });
